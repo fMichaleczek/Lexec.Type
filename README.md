@@ -19,6 +19,7 @@ Requirements :
 -------------
 
 Requires -Version 5.0.9883.0
+
 Requires –Modules Poke
 
 Example :
@@ -47,7 +48,7 @@ Add-ClassType -BuilderAccess 'RunAndSave' -ScriptCode @'
     }
 '@
 
-[MyNameSpaceTest.SubName
+[MyNameSpaceTest.SubName.ClassImplementsInterface]::new('toto') -is [iFoo]
 ```
 
 
