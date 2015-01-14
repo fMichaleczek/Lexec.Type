@@ -18,8 +18,8 @@ About this module :
 Requirements :
 -------------
 
-#Requires -Version 5.0.9883.0
-#Requires –Modules Poke
+Requires -Version 5.0.9883.0
+Requires –Modules Poke
 
 Example :
 ---------
