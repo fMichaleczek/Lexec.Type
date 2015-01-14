@@ -1,5 +1,5 @@
 #Requires -Version 5.0.9883.0
-#Requires –Modules Poke
+#Requires -Modules Poke
 Set-StrictMode -Version Latest
 
 class ClassType {
