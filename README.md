@@ -27,7 +27,7 @@ Example :
 
 # Example with attributes MetaClassAttribute
 ```powershell
-Add-ClassType -ScriptBlock {
+Add-ClassType {
     [MetaClassAttribute('MyNamespace',[Object],[System.Collections.IEnumerable])]
     class EnumeratedGreeting1 {
         [System.Collections.IEnumerator] GetEnumerator() {
@@ -67,7 +67,7 @@ Add-ClassType {
     
 } -PassThru | Select FullName,Name
 
-# Example where we use AST keyword namespace ( override MetaClassAttribute attribute )
+# Example where we use AST keyword namespace
 ```powershell
 Add-ClassType {
     namespace toto {
@@ -81,7 +81,13 @@ Add-ClassType {
 } -PassThru | Select FullName,Name
 ```
 
-# Example where we alias namespace to Add-ClassType and use argument NamespaceName
+# Example with cmdlet namespace contain classes
+```powershell
+$Files = Get-ChildItem -File -Path "C:\Projects\PowershellClass" -Filter "*.ps1" 
+Add-ClassType -Namespace Titi -FilePath $Files.FullName -PassThru | Select FullName,Name
+```
+
+# Example where we alias namespace to change Add-ClassType behaviour
 ```powershell
 Set-Alias namespace Add-ClassType
 Set-Alias %namespace Add-ClassType
@@ -105,13 +111,7 @@ Set-Alias %namespace Add-ClassType
 } -PassThru | Select FullName,Name
 ```
 
-# Example to load a full directory of class file
-```powershell
-$Files = Get-ChildItem -File -Path "C:\Projects\PowershellClass" -Filter "*.ps1" 
-Add-ClassType -Namespace Titi -FilePath $Files.FullNames -PassThru | Select FullName,Name
-```
-
-# Example to load a full directory of class file
+# Example with an simple interface and debug export to dll
 ```powershell
 Add-Type -Language Csharp -TypeDefinition @'
     public interface IFoo
