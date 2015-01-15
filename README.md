@@ -1,9 +1,9 @@
 Lexec.Type
 ===========
 
-Module about Powershell and DotNet Type
+Module about Powershell, Class, AssemblyBuilder and DotNet Type
 
-EXPERIMENTAL
+EXPERIMENTAL (IN ACTIVE DEVELOPMENT)
 
 About this module :
 -------------------
@@ -25,7 +25,66 @@ Requires –Modules Poke
 Example :
 ---------
 
+# Example with attributes MetaClassAttribute
 ```powershell
+Add-ClassType -ScriptBlock {
+    [MetaClassAttribute('MyNamespace',[Object],[System.Collections.IEnumerable])]
+    class EnumeratedGreeting1 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+    [MetaClassAttribute('MyNamespace2',[Object],[System.Collections.IEnumerable])]
+    class EnumeratedGreeting2 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+} -PassThru | Select FullName,Name
+```
+
+# Example where we use AST keyword namespace ( override MetaClassAttribute attribute )
+```powershell
+Add-ClassType -ScriptBlock {
+    namespace toto {
+        [MetaClassAttribute('AAA',[Object],[System.Collections.IEnumerable])]
+        class EnumeratedGreeting3 {
+            [System.Collections.IEnumerator] GetEnumerator() {
+                return "Hello World".GetEnumerator()
+            }
+        }
+    }
+} -PassThru | Select FullName,Name
+```
+
+# Example where we alias namespace to Add-ClassType and use argument NamespaceName
+```powershell
+Set-Alias namespace Add-ClassType
+Set-Alias %namespace Add-ClassType
+
+& namespace toto {
+    [MetaClassAttribute('ttttt',[Object],[System.Collections.IEnumerable])]
+    class EnumeratedGreeting4 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+} -PassThru | Select FullName,Name
+
+%namespace toto {
+    [MetaClassAttribute('aaaaa',[Object],[System.Collections.IEnumerable])]
+    class EnumeratedGreeting5 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+} -PassThru | Select FullName,Name
+```
+
+# Example to load a full directory of class file
+```powershell
+Get-ChildItem -File -Path "Titi" -Filter "*.ps1" | Add-ClassType -Namespace Titi -PassThru | Select FullName,Name
+```
 
 Add-Type -Language Csharp -TypeDefinition @'
     public interface IFoo
@@ -34,23 +93,23 @@ Add-Type -Language Csharp -TypeDefinition @'
     }
 '@ 
 
-Add-ClassType -BuilderAccess 'RunAndSave' -ScriptCode @'
-[SuperClass(namespace='MyNameSpaceTest.SubName',interface='IFoo')]
-    class ClassImplementsInterface {
-        [string] $Name
+# Example to load a full directory of class file
+```powershell
+Add-ClassType -BuilderAccess 'RunAndSave' -ScritBlock {
+    [MetaClassAttribute(namespace='MyNameSpaceTest.SubName',interface='IFoo')]
+        class ClassImplementsInterface {
+            [string] $Name
 
-        ClassImplementsInterface($Name) {
-            $this.Name = $Name
+            ClassImplementsInterface($Name) {
+                $this.Name = $Name
+            }
+            [void] Foo() {
+                Write-Host "Foo()"
+            }
         }
-        [void] Foo() {
-            Write-Host "Foo()"
-        }
-    }
-'@
-
+}
 [MyNameSpaceTest.SubName.ClassImplementsInterface]::new('toto') -is [iFoo]
 ```
-
 
 Flavien Michaleczek
 fmichaleczek@gmail.com
