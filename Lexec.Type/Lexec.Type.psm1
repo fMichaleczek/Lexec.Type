@@ -378,24 +378,21 @@ function Add-ClassType {
     [CmdletBinding(DefaultParameterSetName='ScriptBlock')]
     Param(
     
-        [Parameter(Mandatory=$false,ParameterSetName="ScriptBlock",Position=0)]
+        [Parameter(Mandatory=$true,ParameterSetName="ScriptBlockWithNamespace",Position=0)]
+        [Parameter(Mandatory=$true,ParameterSetName="FileWithNamespace",Position=0)]
         [Parameter()]
         [string]
         $NamespaceName,
         
-        [Parameter(Mandatory=$true,ParameterSetName="ScriptBlock",Position=1)]
+        [Parameter(Mandatory=$true,ParameterSetName="ScriptBlock",Position=0)]
+        [Parameter(Mandatory=$true,ParameterSetName="ScriptBlockWithNamespace",Position=1)]
         [ValidateNotNullOrEmpty()]
         [Alias("Script","Block")]
         [scriptblock] 
         $ScriptBlock,
         
-        [Parameter(Mandatory=$true,ParameterSetName="Code")]
-        [ValidateNotNullOrEmpty()]
-        [Alias("Code")]
-        [string[]] 
-        $ScriptCode,
-        
-        [Parameter(Mandatory=$true,ParameterSetName="File")]
+        [Parameter(Mandatory=$true,ParameterSetName="File",Position=0)]
+        [Parameter(Mandatory=$true,ParameterSetName="FileWithNamespace",Position=1)]
         [ValidateNotNullOrEmpty()]
         [Alias("File","Path")]
         [string[]]

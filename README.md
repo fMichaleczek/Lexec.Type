@@ -43,9 +43,33 @@ Add-ClassType -ScriptBlock {
 } -PassThru | Select FullName,Name
 ```
 
+# Example with attributes MetaClassAttribute
+```powershell
+Add-ClassType {
+    [MetaClassAttribute('MyNamespace',[Object],[System.Collections.IEnumerable])]
+    class EnumeratedGreeting1 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+    [MetaClassAttribute(BaseType = [Object], Interfaces=[System.Collections.IEnumerable])]
+    class EnumeratedGreeting2 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+    [MetaClassAttribute(NameSpaceName='Something.Wicked', BaseType = [Object], Interfaces=([System.Collections.IEnumerable],[System.Collections.IList]))]
+    class EnumeratedGreeting3 {
+        [System.Collections.IEnumerator] GetEnumerator() {
+            return "Hello World".GetEnumerator()
+        }
+    }
+    
+} -PassThru | Select FullName,Name
+
 # Example where we use AST keyword namespace ( override MetaClassAttribute attribute )
 ```powershell
-Add-ClassType -ScriptBlock {
+Add-ClassType {
     namespace toto {
         [MetaClassAttribute('AAA',[Object],[System.Collections.IEnumerable])]
         class EnumeratedGreeting3 {
@@ -83,20 +107,20 @@ Set-Alias %namespace Add-ClassType
 
 # Example to load a full directory of class file
 ```powershell
-Get-ChildItem -File -Path "Titi" -Filter "*.ps1" | Add-ClassType -Namespace Titi -PassThru | Select FullName,Name
+$Files = Get-ChildItem -File -Path "C:\Projects\PowershellClass" -Filter "*.ps1" 
+Add-ClassType -Namespace Titi -FilePath $Files.FullNames -PassThru | Select FullName,Name
 ```
 
+# Example to load a full directory of class file
+```powershell
 Add-Type -Language Csharp -TypeDefinition @'
     public interface IFoo
     {
         void Foo();
     }
 '@ 
-
-# Example to load a full directory of class file
-```powershell
-Add-ClassType -BuilderAccess 'RunAndSave' -ScritBlock {
-    [MetaClassAttribute(namespace='MyNameSpaceTest.SubName',interface='IFoo')]
+Add-ClassType -BuilderAccess 'RunAndSave' {
+    [MetaClassAttribute(NamespaceName='MyNameSpaceTest.SubName',BaseType=[object],Interfaces=[IFoo])]
         class ClassImplementsInterface {
             [string] $Name
 
